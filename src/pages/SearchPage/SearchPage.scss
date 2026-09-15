@@ -1,0 +1,11 @@
+.searchpage__wrapper {
+    height: 100%;
+    background-color: black;
+}   
+.searchpage__wrapper-wrap {
+    display: flex;
+    flex-direction: column;
+    width: calc(40% - 225px);
+    margin-left: 900px;
+    padding-top: 165px;
+}

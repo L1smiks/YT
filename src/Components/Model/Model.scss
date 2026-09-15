@@ -1,0 +1,30 @@
+.model__content::before {
+    content: "";
+    z-index: 10;
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0.8;
+    background-color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.model__content {
+    z-index: 11;
+    background-color: white;
+    width: 35%;
+    height: 35%;
+}
+
+.model__wrapper {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 11;
+}

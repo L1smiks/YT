@@ -1,0 +1,107 @@
+.button_like {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #282828;
+    color: white;
+    border: none;
+    border-radius: 16px 0px 0px 16px;
+    cursor: pointer;
+}
+
+.button_dislike {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #282828;
+    color: white;
+    border: none;
+    border-radius: 0px 16px 16px 0px;
+    cursor: pointer;
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.global_button_under_video {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #282828;
+    color: white;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    margin: 0px 0px 0px 5px;
+}
+
+.buttons_under__video {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.description__wrapper {
+    background-color: #272727;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: #f1f1f1;
+    font-size: 14px;
+    line-height: 20px;
+    transition: background-color 0.2s;
+    overflow: hidden;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    display: block;
+}
+
+.description__wrapper:hover {
+    background-color: #3f3f3f;
+}
+
+.description__wrapper-header {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.description__header-date {
+    margin-left: 8px;
+}
+
+.collapsed {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.expanded {
+    cursor: pointer;
+}
+
+.description__toggle-btn {
+    font-weight: bold;
+    color: #f1f1f1;
+    margin-left: 4px;
+    cursor: pointer;
+    display: inline;
+}
+
+.collapsed .description__toggle-btn {
+    float: none;
+    margin-top: 0;
+    position: static;
+    background: transparent;
+    box-shadow: none;
+}
+
+.description__content-text {
+    margin: 0;
+    white-space: pre-wrap;
+    display: inline;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
