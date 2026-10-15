@@ -1,0 +1,14 @@
+.home-page {
+    &__chips {
+        position: sticky;
+        top: var(--header-height);
+        z-index: 5;
+        padding: 12px var(--page-gutter);
+        background-color: rgba(15, 15, 15, 0.96);
+        backdrop-filter: blur(12px);
+    }
+
+    &__content {
+        padding: 12px var(--page-gutter) 48px;
+    }
+}

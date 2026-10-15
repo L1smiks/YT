@@ -1,0 +1,52 @@
+@use '../../styles/mixins' as *;
+
+.video-compact {
+    display: flex;
+    gap: 8px;
+    min-width: 0;
+    border-radius: var(--radius-sm);
+
+    &__thumb {
+        position: relative;
+        flex: 0 0 168px;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-radius: var(--radius-sm);
+        background-color: var(--color-surface-2);
+    }
+
+    &__text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+        padding-right: 8px;
+    }
+
+    &__title {
+        @include line-clamp(2);
+        margin-bottom: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 20px;
+        word-break: break-word;
+    }
+
+    &__meta {
+        overflow: hidden;
+        color: var(--color-text-secondary);
+        font-size: 12px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &:hover &__title {
+        color: #fff;
+    }
+
+    @include below($bp-sm) {
+        &__thumb {
+            flex-basis: 45%;
+        }
+    }
+}

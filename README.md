@@ -1,69 +1,45 @@
-# React + TypeScript + Vite
+# KotTube — фронтенд
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Клієнт відеоплатформи у стилі YouTube: стрічка з категоріями, перегляд відео з коментарями, пошук, студія завантаження та сторінка каналу.
 
-Currently, two official plugins are available:
+**Стек:** React 19, TypeScript, Vite, React Router 7, Zustand, MUI 7, SCSS.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Запуск
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+cp .env.example .env.local   # за потреби змініть адресу бекенду
+npm run dev                  # http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Бекенд (гілка `backend`) має працювати на `http://localhost:3777`, або вкажіть іншу адресу у `VITE_API_URL`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Команда           | Що робить                         |
+| ----------------- | --------------------------------- |
+| `npm run dev`     | дев-сервер з HMR                  |
+| `npm run build`   | перевірка типів і продакшн-збірка |
+| `npm run lint`    | ESLint                            |
+| `npm run preview` | перегляд зібраної версії          |
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Структура
+
 ```
+src/
+  api/client.ts      усі запити до бекенду, нормалізація даних, таймаути
+  config.ts          назва застосунку, URL API, категорії
+  theme.ts           тема MUI (темна, узгоджена з CSS-змінними)
+  styles/            глобальні стилі, брейкпоінти та міксини SCSS
+  store/             Zustand: користувач (persist) і стан UI (діалог входу, тости)
+  hooks/useFetch.ts  завантаження даних зі скасуванням запитів
+  layout/AppLayout   шапка, бокове меню / мобільна навігація, модалки
+  Components/        перевикористовувані компоненти
+  pages/             сторінки: Home, Video, Search, Studio, Profile
+```
+
+## Адаптивність
+
+- **≥ 1200px** — повне бокове меню (кнопка ☰ згортає його до вузької панелі).
+- **900–1199px** — вузька панель з іконками, повне меню відкривається як шухляда.
+- **< 1016px** — сторінка відео стає одноколонковою (список «Смотрите также» під коментарями).
+- **< 900px** — меню лише у шухляді.
+- **< 600px** — нижня панель навігації, пошук розгортається на всю ширину шапки, плеєр від краю до краю.

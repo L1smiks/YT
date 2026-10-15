@@ -1,0 +1,16 @@
+@use '../../styles/mixins' as *;
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 40px 16px;
+
+    @include above($bp-xl) {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+
+    @include below($bp-sm) {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}

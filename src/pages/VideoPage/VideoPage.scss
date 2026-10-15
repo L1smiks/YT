@@ -1,14 +1,38 @@
-.videopage__wrapper {
-    padding: 150px 0px 0px 225px;
-    display: flex;
-    
-}
+@use '../../styles/mixins' as *;
 
-.videobar__wrapper {
-    width: 650px;
-}
+.video-page {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 402px;
+    gap: 24px;
+    max-width: 1754px;
+    margin: 0 auto;
+    padding: 24px var(--page-gutter) 48px;
 
-.videocom__wrapper {
-    padding: 0px 50px 0px 50px;
-    flex-grow: 1;
+    @include below(1016px) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    @include below($bp-sm) {
+        padding-top: 0;
+    }
+
+    &__primary {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    &__secondary {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    &__secondary-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
 }

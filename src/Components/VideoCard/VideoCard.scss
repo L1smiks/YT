@@ -1,0 +1,115 @@
+@use '../../styles/mixins' as *;
+
+.video-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+
+    &__thumb {
+        display: block;
+        position: relative;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-radius: var(--radius-md);
+        background-color: var(--color-surface-2);
+
+        @media (hover: hover) {
+            .video-card:hover & img {
+                transform: scale(1.04);
+            }
+        }
+
+        &--skeleton {
+            width: 100%;
+            height: auto !important;
+        }
+    }
+
+    &__body {
+        display: flex;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    &__text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+    }
+
+    &__title {
+        @include line-clamp(2);
+        margin-bottom: 2px;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 22px;
+        word-break: break-word;
+    }
+
+    &__channel,
+    &__meta {
+        color: var(--color-text-secondary);
+        font-size: 14px;
+    }
+
+    &__channel {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__description {
+        @include line-clamp(2);
+        margin-top: 8px;
+        color: var(--color-text-secondary);
+        font-size: 13px;
+    }
+
+    &__badge {
+        align-self: flex-start;
+        margin-top: 8px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        background-color: var(--color-surface-2);
+        color: var(--color-text-secondary);
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    /* Search results: thumbnail on the left */
+    &--row {
+        display: grid;
+        grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+        gap: 16px;
+
+        .video-card__title {
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 26px;
+        }
+
+        .video-card__channel {
+            margin: 10px 0 0;
+            font-size: 12px;
+        }
+
+        .video-card__meta {
+            font-size: 12px;
+        }
+
+        @include below($bp-sm) {
+            grid-template-columns: 1fr;
+            gap: 10px;
+
+            .video-card__title {
+                font-size: 16px;
+                line-height: 22px;
+            }
+        }
+    }
+}

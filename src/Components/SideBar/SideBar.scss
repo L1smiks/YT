@@ -1,10 +1,103 @@
-.sidebar__button {
-    display: block;
-    background-color: white;
-    margin: 0 auto;
-    max-width: 150px;
-    padding: 10px 15px;
-    font-size: 20px;
-    border-radius: 10px;
-    border-width: 0;
+.sidebar {
+    padding: 12px;
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 44px;
+        padding: 0 12px 12px;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        height: 40px;
+        padding: 0 12px;
+        border-radius: 10px;
+        color: var(--color-text);
+        font-size: 14px;
+        transition: background-color 0.15s ease;
+
+        &:hover {
+            background-color: var(--color-surface-2);
+        }
+
+        &--active {
+            background-color: var(--color-surface-2);
+            font-weight: 600;
+
+            &:hover {
+                background-color: var(--color-surface-hover);
+            }
+        }
+    }
+
+    &__icon {
+        display: flex;
+        flex-shrink: 0;
+
+        svg {
+            font-size: 24px;
+        }
+    }
+
+    &__label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__divider {
+        margin: 12px 0;
+        border: none;
+        border-top: 1px solid var(--color-border);
+    }
+
+    &__title {
+        padding: 6px 12px 4px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    &__footer {
+        padding: 8px 12px;
+        color: #717171;
+        font-size: 12px;
+    }
+
+    /* Narrow rail: icon above a small caption */
+    &--mini {
+        padding: 4px;
+
+        .sidebar__item {
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+            height: auto;
+            padding: 16px 0 14px;
+            background: none;
+            font-size: 10px;
+            font-weight: 400;
+
+            &:hover {
+                background-color: var(--color-surface-2);
+            }
+        }
+
+        .sidebar__label {
+            max-width: 100%;
+            padding: 0 2px;
+        }
+    }
 }

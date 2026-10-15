@@ -1,128 +1,184 @@
-import './Description.scss'
+import { useState } from 'react';
+import { Skeleton, Tooltip } from '@mui/material';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
-import ShareIcon from '@mui/icons-material/Share';
+import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
+import ReplyIcon from '@mui/icons-material/Reply';
 import DownloadIcon from '@mui/icons-material/Download';
-import ContentCutIcon from '@mui/icons-material/ContentCut';
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useUserStore } from '../../store/storeZustand.tsx'
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import UserAvatar from '../UserAvatar/UserAvatar.tsx';
+import { useCurrentUser } from '../../store/userStore.ts';
+import { useUiStore } from '../../store/uiStore.ts';
+import { dislikeVideo, errorMessage, likeVideo, subscribe, videoStreamUrl } from '../../api/client.ts';
+import { channelLabel, formatCount, formatDate, formatRelativeDate, formatViews } from '../../utils/format.ts';
+import { categoryTitle } from '../../config.ts';
+import type { Video } from '../../types.ts';
+import './Description.scss';
 
-type DescriptionViews = {
-    
-}
+type DescriptionProps = {
+    video: Video;
+    loading?: boolean;
+};
 
-function Description() {
-    const ownerID = useUserStore((state) => state.userId);
-    const [description, setDescription] = useState('');
-    const [usvidid, setUsVidId] = useState('');
-    const [params] = useSearchParams();
-    const id = params.get("id");
-    const [likes, setLikes] = useState('');
-    const [dislikes, setDislikes] = useState('');
-    useEffect (() => {
-        const Fetches = async () => {
-            const url = `http://localhost:3777/api/description/${id}`;
-            const url2 = `http://localhost:3777/api/usid/${id}`;
-            fetch(url)
-            .then(response => {
-                if (response.ok) {
-                    response.json()
-                    .then(data => {
-                        setDescription(data.description);
-                })
-            } else {
-                throw Error('error')
-            }})
-            fetch(url2)
-            .then(response => {
-                if(response.ok) {
-                    response.json()
-                    .then(data => {
-                        setUsVidId(data[0].ownerid)
-                    })
-                } else {
+type Reaction = 'like' | 'dislike' | null;
 
-                }
-            })
+function Description({ video, loading }: DescriptionProps) {
+    const user = useCurrentUser();
+    const openAuth = useUiStore((s) => s.openAuth);
+    const showToast = useUiStore((s) => s.showToast);
+    const [expanded, setExpanded] = useState(false);
+    const [reaction, setReaction] = useState<Reaction>(null);
+    const [likes, setLikes] = useState<number | null>(null);
+    const [dislikes, setDislikes] = useState<number | null>(null);
+    const [subscribed, setSubscribed] = useState(false);
+
+    const isOwnVideo = Boolean(user && video.ownerId && user.id === video.ownerId);
+    const likeCount = likes ?? video.likes;
+    const dislikeCount = dislikes ?? video.dislikes;
+
+    function requireUser(): boolean {
+        if (user) return true;
+        openAuth('login');
+        return false;
+    }
+
+    async function handleLike() {
+        if (!requireUser() || reaction) return;
+        setReaction('like');
+        try {
+            setLikes(await likeVideo(video.id, user!.id));
+        } catch (err) {
+            setReaction(null);
+            showToast(errorMessage(err, 'Не удалось поставить лайк'));
         }
-        Fetches();
-        console.log(ownerID)
-    }, [])
-    const [isExpansion, setIsExpansion] = useState(false);
-    const toggleDescription = () => {setIsExpansion(!isExpansion)};
-    function Likes() {
-        const url = `http://localhost:3777/api/userlike/${id}/${ownerID}`
-        fetch(url)
-        .then(response => {
-            if (response.ok) {
-                response.json()
-                .then(data => {
-                    setLikes(data[0].likes);
-                })
-            } else {
-                throw Error('error')
-            }
-        })
+    }
 
+    async function handleDislike() {
+        if (!requireUser() || reaction) return;
+        setReaction('dislike');
+        try {
+            setDislikes(await dislikeVideo(video.id, user!.id));
+        } catch (err) {
+            setReaction(null);
+            showToast(errorMessage(err, 'Не удалось отправить оценку'));
+        }
     }
-    function DisLikes() {
-        const url = `http://localhost:3777/api/dislike/${id}/${ownerID}`
-        fetch(url)
-        .then(response => {
-            if (response.ok) {
-                response.json()
-                .then(data => {
-                    setDislikes(data[0].dislikes)
-                })
-            } else {
-                throw Error('error')
+
+    async function handleSubscribe() {
+        if (!requireUser() || subscribed || !video.ownerId) return;
+        setSubscribed(true);
+        try {
+            await subscribe(user!.id, video.ownerId);
+            showToast(`Вы подписались на канал ${channelLabel(video)}`);
+        } catch (err) {
+            setSubscribed(false);
+            showToast(errorMessage(err, 'Не удалось подписаться'));
+        }
+    }
+
+    async function handleShare() {
+        const url = window.location.href;
+        try {
+            if (navigator.share) {
+                await navigator.share({ title: video.title, url });
+                return;
             }
-        })
+            await navigator.clipboard.writeText(url);
+            showToast('Ссылка скопирована');
+        } catch {
+            /* the user closed the share sheet */
+        }
     }
-    function Subscribe() {
-        const url = `http://localhost:3777/api/subscribe/${ownerID}/${usvidid}`
-        fetch(url)
-        .then(response => {
-            if(response.ok) {
-                response.json()
-                .then(data => {
-                    console.log(data[0].follow)
-                })
-            } else {
-                throw Error('error')
-            }
-        })
-    }
+
+    const viewsLine = expanded ? formatViews(video.views, true) : formatViews(video.views);
+    const dateLine = expanded ? formatDate(video.createdAt) : formatRelativeDate(video.createdAt);
+    const category = categoryTitle(video.category);
+
     return (
-        <>
-        <div className='buttons_under__video'>
-            <a href='/profile'><img className='user__wrapper-image' src="/src/assets/user.jpg" alt="" /></a>
-            <button onClick={() => Subscribe()}>Subscribe</button>
-            <button className='button_like' onClick={() => Likes()}><ThumbUpOffAltIcon/><span>{likes}</span></button>
-            <button className='button_dislike' onClick={() => DisLikes()}><ThumbDownOffAltIcon/>{dislikes}</button>
-            <button className='global_button_under_video'><ShareIcon/><span>Поделиться</span></button>
-            <button className='global_button_under_video'><DownloadIcon/><span>Скачать</span></button>
-            <button className='global_button_under_video'><ContentCutIcon/><span>Создать клип</span></button>
-        </div>
-        <div className={`description__wrapper ${isExpansion ? 'expanded' : 'collapsed'}`} onClick={toggleDescription}>
-            <div className="description__wrapper-header">
-            <span className='description__header-views'>1 439 319 просмотров</span>
-            <span className='description__header-date'>5 июн. 2025 г.</span>
+        <section className="details">
+            {loading ? (
+                <Skeleton variant="text" width="70%" sx={{ fontSize: 22 }} />
+            ) : (
+                <h1 className="details__title">{video.title || 'Без названия'}</h1>
+            )}
+
+            <div className="details__bar">
+                <div className="details__channel">
+                    <UserAvatar name={channelLabel(video)} size={40} />
+                    <div className="details__channel-text">
+                        <div className="details__channel-name">{channelLabel(video)}</div>
+                        {isOwnVideo && <div className="details__channel-sub">Это ваше видео</div>}
+                    </div>
+                    {!isOwnVideo && video.ownerId && (
+                        <button
+                            type="button"
+                            className={`details__subscribe${subscribed ? ' details__subscribe--active' : ''}`}
+                            onClick={handleSubscribe}
+                        >
+                            {subscribed && <NotificationsNoneIcon fontSize="small" />}
+                            {subscribed ? 'Вы подписаны' : 'Подписаться'}
+                        </button>
+                    )}
+                </div>
+
+                <div className="details__actions">
+                    <div className="details__rating">
+                        <Tooltip title="Нравится">
+                            <button type="button" className="details__action" onClick={handleLike} aria-pressed={reaction === 'like'}>
+                                {reaction === 'like' ? <ThumbUpAltIcon fontSize="small" /> : <ThumbUpOffAltIcon fontSize="small" />}
+                                {likeCount !== null && <span>{formatCount(likeCount)}</span>}
+                            </button>
+                        </Tooltip>
+                        <span className="details__rating-divider" />
+                        <Tooltip title="Не нравится">
+                            <button type="button" className="details__action" onClick={handleDislike} aria-pressed={reaction === 'dislike'}>
+                                {reaction === 'dislike' ? <ThumbDownAltIcon fontSize="small" /> : <ThumbDownOffAltIcon fontSize="small" />}
+                                {dislikeCount !== null && reaction === 'dislike' && <span>{formatCount(dislikeCount)}</span>}
+                            </button>
+                        </Tooltip>
+                    </div>
+                    <button type="button" className="details__action details__action--pill" onClick={handleShare}>
+                        <ReplyIcon fontSize="small" sx={{ transform: 'scaleX(-1)' }} />
+                        <span>Поделиться</span>
+                    </button>
+                    <a className="details__action details__action--pill" href={videoStreamUrl(video.id)} download>
+                        <DownloadIcon fontSize="small" />
+                        <span>Скачать</span>
+                    </a>
+                </div>
             </div>
-            <div className='description__wrapper-content'>
-            <p className='description__content-text'>
-                {isExpansion 
-                ? description
-                : description.slice(0, 100) + "..."}
-                <span className="description__toggle-btn">
-                {isExpansion ? ' Свернуть' : 'еще'}
-                </span>
-            </p>
+
+            <div
+                className={`details__box${expanded ? ' details__box--expanded' : ''}`}
+                onClick={() => !expanded && setExpanded(true)}
+                role={expanded ? undefined : 'button'}
+                tabIndex={expanded ? undefined : 0}
+                onKeyDown={(e) => {
+                    if (!expanded && (e.key === 'Enter' || e.key === ' ')) {
+                        e.preventDefault();
+                        setExpanded(true);
+                    }
+                }}
+            >
+                <div className="details__box-meta">
+                    {[viewsLine, dateLine].filter(Boolean).join('  ')}
+                    {category && <span className="details__box-tag">#{category}</span>}
+                </div>
+                <p className="details__box-text">{video.description || 'Описание отсутствует.'}</p>
+                <button
+                    type="button"
+                    className="details__box-toggle"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setExpanded((v) => !v);
+                    }}
+                >
+                    {expanded ? 'Свернуть' : 'Ещё'}
+                </button>
             </div>
-        </div>
-        </>
-    )
+        </section>
+    );
 }
 
 export default Description;

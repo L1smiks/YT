@@ -1,0 +1,51 @@
+// Breakpoints shared by every component stylesheet.
+$bp-sm: 600px;
+$bp-md: 900px;
+$bp-lg: 1200px;
+$bp-xl: 1400px;
+
+@mixin below($width) {
+    @media (max-width: ($width - 0.02px)) {
+        @content;
+    }
+}
+
+@mixin above($width) {
+    @media (min-width: $width) {
+        @content;
+    }
+}
+
+@mixin line-clamp($lines) {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@mixin pill-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 999px;
+    background-color: var(--color-surface-2);
+    color: var(--color-text);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+        background-color: var(--color-surface-hover);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+}

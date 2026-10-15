@@ -1,17 +1,38 @@
-import './Video.scss'
-import { useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { thumbnailUrl, videoStreamUrl } from '../../api/client.ts';
+import './Video.scss';
 
+type VideoPlayerProps = {
+    videoId: string;
+};
 
-function Video() {
-    const [params] = useSearchParams();
-    const id = params.get("id");
+function VideoPlayer({ videoId }: VideoPlayerProps) {
+    const [failed, setFailed] = useState(false);
+
     return (
-        <div className='video__wrapper'>
-            <video src={`http://localhost:3777/api/video/${id}`} id='video' controls className='video__image'>
-                Ошибка загрузки
-            </video>
+        <div className="player">
+            {failed ? (
+                <div className="player__error">
+                    <ErrorOutlineIcon />
+                    <p>Не удалось воспроизвести видео</p>
+                </div>
+            ) : (
+                <video
+                    className="player__video"
+                    src={videoStreamUrl(videoId)}
+                    poster={thumbnailUrl(videoId)}
+                    controls
+                    autoPlay
+                    playsInline
+                    preload="metadata"
+                    onError={() => setFailed(true)}
+                >
+                    Ваш браузер не поддерживает воспроизведение видео.
+                </video>
+            )}
         </div>
-    )
+    );
 }
 
-export default Video;
+export default VideoPlayer;

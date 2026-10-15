@@ -1,0 +1,96 @@
+@use '../../styles/mixins' as *;
+
+.profile {
+    max-width: 1284px;
+    margin: 0 auto;
+    padding: 0 var(--page-gutter) 48px;
+
+    &__banner {
+        height: clamp(96px, 16vw, 200px);
+        margin-top: 16px;
+        border-radius: var(--radius-lg);
+        background:
+            radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.18), transparent 40%),
+            var(--gradient-accent);
+
+        @include below($bp-sm) {
+            margin-top: 8px;
+            border-radius: var(--radius-md);
+        }
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 24px 0;
+
+        @include below($bp-sm) {
+            gap: 16px;
+
+            .MuiAvatar-root {
+                width: 72px !important;
+                height: 72px !important;
+                font-size: 30px !important;
+            }
+        }
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
+    }
+
+    &__name {
+        font-size: 36px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        overflow-wrap: anywhere;
+
+        @include below($bp-sm) {
+            font-size: 24px;
+        }
+    }
+
+    &__stats {
+        color: var(--color-text-secondary);
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    &__btn.MuiButton-root {
+        background-color: var(--color-surface-2);
+        color: var(--color-text);
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+        }
+    }
+
+    &__tabs {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    &__tab {
+        padding: 12px 0;
+        color: var(--color-text-secondary);
+        font-size: 16px;
+        font-weight: 600;
+
+        &--active {
+            border-bottom: 2px solid var(--color-text);
+            color: var(--color-text);
+        }
+    }
+}

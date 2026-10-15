@@ -1,0 +1,36 @@
+.category-bar {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &__chip {
+        flex-shrink: 0;
+        height: 32px;
+        padding: 0 12px;
+        border: none;
+        border-radius: var(--radius-sm);
+        background-color: var(--color-surface-2);
+        color: var(--color-text);
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+            background-color 0.15s ease,
+            color 0.15s ease;
+
+        &:hover {
+            background-color: var(--color-surface-hover);
+        }
+
+        &--active,
+        &--active:hover {
+            background-color: var(--color-text);
+            color: var(--color-bg);
+        }
+    }
+}
